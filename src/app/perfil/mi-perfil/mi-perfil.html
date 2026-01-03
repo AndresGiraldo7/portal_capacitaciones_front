@@ -1,0 +1,458 @@
+<div class="min-h-screen bg-gray-50">
+  <app-navbar></app-navbar>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+    <!-- Header con foto de perfil - Responsive -->
+    <div
+      class="bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl shadow-lg p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 text-white"
+    >
+      <div class="flex flex-col sm:flex-row items-center sm:space-x-6 space-y-4 sm:space-y-0">
+        <!-- Avatar -->
+        <div
+          class="w-20 h-20 sm:w-24 sm:h-24 bg-white rounded-full flex items-center justify-center text-3xl sm:text-4xl font-bold text-primary-600 flex-shrink-0"
+        >
+          {{ inicialUsuario }}
+        </div>
+
+        <!-- Info del usuario -->
+        <div class="flex-1 text-center sm:text-left">
+          <h1 class="text-2xl sm:text-3xl font-bold mb-2">{{ currentUser?.nombre }}</h1>
+          <p class="text-primary-100 mb-3 text-sm sm:text-base">
+            @{{ currentUser?.username }} • {{ currentUser?.email }}
+          </p>
+          <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-4">
+            <span class="px-3 py-1 bg-white/20 rounded-full text-xs sm:text-sm font-medium">
+              {{ currentUser?.rol }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Contador de cursos completados -->
+        <div class="text-center sm:text-right">
+          <div class="text-4xl sm:text-5xl font-bold">{{ cursosCompletados }}</div>
+          <div class="text-primary-100 text-sm sm:text-base">Cursos Completados</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Estadísticas principales en cards - Responsive Grid -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8">
+      <!-- Total de cursos -->
+      <div class="card hover:shadow-lg transition-shadow p-4">
+        <div class="flex flex-col sm:flex-row items-center sm:justify-between">
+          <div class="text-center sm:text-left mb-2 sm:mb-0">
+            <p class="text-xs sm:text-sm text-gray-500 mb-1">Total Cursos</p>
+            <p class="text-2xl sm:text-3xl font-bold text-gray-900">{{ progresos.length }}</p>
+          </div>
+          <div class="text-3xl sm:text-4xl">📊</div>
+        </div>
+      </div>
+
+      <!-- Completados -->
+      <div class="card hover:shadow-lg transition-shadow bg-green-50 border-green-200 p-4">
+        <div class="flex flex-col sm:flex-row items-center sm:justify-between">
+          <div class="text-center sm:text-left mb-2 sm:mb-0">
+            <p class="text-xs sm:text-sm text-green-600 mb-1">Completados</p>
+            <p class="text-2xl sm:text-3xl font-bold text-green-700">{{ cursosCompletados }}</p>
+          </div>
+          <div class="text-3xl sm:text-4xl">✅</div>
+        </div>
+        <div class="mt-2">
+          <div class="w-full bg-green-200 rounded-full h-2">
+            <div
+              class="bg-green-600 h-2 rounded-full transition-all duration-500"
+              [style.width.%]="porcentajeCompletado"
+            ></div>
+          </div>
+          <p class="text-xs text-green-600 mt-1 text-center sm:text-left">
+            {{ porcentajeCompletado }}% de progreso
+          </p>
+        </div>
+      </div>
+
+      <!-- En progreso -->
+      <div class="card hover:shadow-lg transition-shadow bg-yellow-50 border-yellow-200 p-4">
+        <div class="flex flex-col sm:flex-row items-center sm:justify-between">
+          <div class="text-center sm:text-left mb-2 sm:mb-0">
+            <p class="text-xs sm:text-sm text-yellow-600 mb-1">En Progreso</p>
+            <p class="text-2xl sm:text-3xl font-bold text-yellow-700">{{ cursosEnProgreso }}</p>
+          </div>
+          <div class="text-3xl sm:text-4xl">📚</div>
+        </div>
+      </div>
+
+      <!-- Insignias -->
+      <div class="card hover:shadow-lg transition-shadow bg-blue-50 border-blue-200 p-4">
+        <div class="flex flex-col sm:flex-row items-center sm:justify-between">
+          <div class="text-center sm:text-left mb-2 sm:mb-0">
+            <p class="text-xs sm:text-sm text-blue-600 mb-1">Insignias</p>
+            <p class="text-2xl sm:text-3xl font-bold text-blue-700">{{ insignias.length }}</p>
+          </div>
+          <div class="text-3xl sm:text-4xl">🏅</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grid de 3 columnas - Responsive -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+      <!-- Información del usuario -->
+      <div class="card">
+        <h2 class="text-lg sm:text-xl font-semibold mb-4 flex items-center">
+          <span class="mr-2">👤</span>
+          Información Personal
+        </h2>
+        <div class="space-y-3">
+          <div class="p-3 bg-gray-50 rounded-lg">
+            <p class="text-xs text-gray-500 uppercase tracking-wide">Nombre Completo</p>
+            <p class="font-medium text-gray-900 text-sm sm:text-base break-words">
+              {{ currentUser?.nombre }}
+            </p>
+          </div>
+          <div class="p-3 bg-gray-50 rounded-lg">
+            <p class="text-xs text-gray-500 uppercase tracking-wide">Usuario</p>
+            <p class="font-medium text-gray-900 text-sm sm:text-base break-words">
+              @{{ currentUser?.username }}
+            </p>
+          </div>
+          <div class="p-3 bg-gray-50 rounded-lg">
+            <p class="text-xs text-gray-500 uppercase tracking-wide">Email</p>
+            <p class="font-medium text-gray-900 text-sm sm:text-base break-all">
+              {{ currentUser?.email }}
+            </p>
+          </div>
+          <div class="p-3 bg-gray-50 rounded-lg">
+            <p class="text-xs text-gray-500 uppercase tracking-wide">Rol</p>
+            <span
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800"
+            >
+              {{ currentUser?.rol }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progreso por módulos -->
+      <div class="card">
+        <h2 class="text-lg sm:text-xl font-semibold mb-4 flex items-center">
+          <span class="mr-2">📈</span>
+          Progreso por Módulos
+        </h2>
+        <div *ngIf="modulosProgreso.length === 0" class="text-center py-8 text-gray-500">
+          <p class="text-3xl mb-2">📖</p>
+          <p class="text-sm">Aún no has iniciado ningún módulo</p>
+        </div>
+        <div
+          *ngIf="modulosProgreso.length > 0"
+          class="space-y-3 max-h-[400px] overflow-y-auto pr-2"
+        >
+          <div
+            *ngFor="let modulo of modulosProgreso"
+            class="p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg"
+          >
+            <div class="flex items-center justify-between mb-2">
+              <p class="font-semibold text-gray-900 text-sm break-words flex-1 mr-2">
+                {{ modulo.nombre }}
+              </p>
+              <span class="text-xs font-bold text-primary-600 flex-shrink-0">
+                {{ modulo.porcentaje }}%
+              </span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div
+                class="bg-primary-600 h-2 rounded-full transition-all duration-500"
+                [style.width.%]="modulo.porcentaje"
+              ></div>
+            </div>
+            <p class="text-xs text-gray-600 mt-1">
+              {{ modulo.completados }} de {{ modulo.total }} cursos
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actividad reciente -->
+      <div class="card">
+        <h2 class="text-lg sm:text-xl font-semibold mb-4 flex items-center">
+          <span class="mr-2">⚡</span>
+          Actividad Reciente
+        </h2>
+        <div *ngIf="actividadReciente.length === 0" class="text-center py-8 text-gray-500">
+          <p class="text-3xl mb-2">💤</p>
+          <p class="text-sm">No hay actividad reciente</p>
+        </div>
+        <div *ngIf="actividadReciente.length > 0" class="space-y-3 max-h-80 overflow-y-auto pr-2">
+          <div
+            *ngFor="let actividad of actividadReciente"
+            class="flex items-start p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <div class="text-xl sm:text-2xl mr-3 flex-shrink-0">{{ actividad.icono }}</div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-gray-900 break-words">{{ actividad.titulo }}</p>
+              <p class="text-xs text-gray-600 break-words">{{ actividad.descripcion }}</p>
+              <p class="text-xs text-gray-500 mt-1">{{ actividad.fecha | date : 'short' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección de Insignias - Responsive -->
+    <div class="card mb-6 sm:mb-8">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+        <h2 class="text-xl sm:text-2xl font-bold flex items-center flex-wrap">
+          <span class="mr-2">🏅</span>
+          <span>Mis Insignias</span>
+          <span
+            class="ml-3 px-3 py-1 bg-primary-100 text-primary-800 text-sm font-medium rounded-full"
+          >
+            {{ insignias.length }}
+          </span>
+        </h2>
+        <div *ngIf="insignias.length > 0" class="text-xs sm:text-sm text-gray-500">
+          Última obtenida: {{ insignias[0]?.fechaOtorgada | date : 'short' }}
+        </div>
+      </div>
+
+      <div *ngIf="loading" class="text-center py-12">
+        <div
+          class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"
+        ></div>
+        <p class="text-gray-500 mt-4 text-sm sm:text-base">Cargando insignias...</p>
+      </div>
+
+      <div *ngIf="!loading && insignias.length === 0" class="text-center py-12">
+        <div class="text-5xl sm:text-6xl mb-4">🎯</div>
+        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Aún no tienes insignias</h3>
+        <p class="text-gray-500 mb-6 text-sm sm:text-base px-4">
+          Completa cursos y desafíos para obtener tus primeras insignias
+        </p>
+        <div
+          class="inline-flex items-center px-4 py-2 bg-primary-50 text-primary-700 rounded-lg mx-4"
+        >
+          <span class="mr-2">💡</span>
+          <span class="text-xs sm:text-sm font-medium"
+            >Consejo: Completa tu primer curso para obtener la insignia 🏆</span
+          >
+        </div>
+      </div>
+
+      <div *ngIf="!loading && insignias.length > 0">
+        <div
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4"
+        >
+          <div
+            *ngFor="let ui of insignias"
+            class="group relative flex flex-col items-center p-3 sm:p-4 bg-gradient-to-br from-yellow-50 via-orange-50 to-yellow-50 rounded-xl border-2 border-yellow-200 hover:border-yellow-400 hover:shadow-xl transition-all cursor-pointer transform hover:-translate-y-1"
+          >
+            <div
+              class="text-4xl sm:text-6xl mb-2 sm:mb-3 group-hover:scale-125 transition-transform duration-300"
+            >
+              {{ getIconoInsignia(ui) }}
+            </div>
+            <p class="text-xs sm:text-sm font-bold text-gray-900 text-center line-clamp-2 mb-1">
+              {{ ui.insignia.nombre }}
+            </p>
+            <p class="text-xs text-gray-600 text-center line-clamp-2 mb-2">
+              {{ ui.insignia.descripcion }}
+            </p>
+            <div
+              class="absolute top-2 right-2 w-5 h-5 sm:w-6 sm:h-6 bg-green-500 rounded-full flex items-center justify-center"
+            >
+              <span class="text-white text-xs">✓</span>
+            </div>
+            <p class="text-xs text-gray-500 font-medium mt-auto">
+              {{ ui.fechaOtorgada | date : 'dd/MM/yy' }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Historial de cursos detallado - Responsive -->
+    <div class="card">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+        <h2 class="text-xl sm:text-2xl font-bold flex items-center">
+          <span class="mr-2">📚</span>
+          Historial de Cursos
+        </h2>
+        <div class="flex flex-wrap items-center gap-2">
+          <button
+            (click)="filtroEstado = 'TODOS'"
+            [class.bg-primary-600]="filtroEstado === 'TODOS'"
+            [class.text-white]="filtroEstado === 'TODOS'"
+            [class.bg-gray-200]="filtroEstado !== 'TODOS'"
+            class="px-3 py-1 rounded-lg text-xs sm:text-sm font-medium transition-colors"
+          >
+            Todos
+          </button>
+          <button
+            (click)="filtroEstado = 'COMPLETADO'"
+            [class.bg-green-600]="filtroEstado === 'COMPLETADO'"
+            [class.text-white]="filtroEstado === 'COMPLETADO'"
+            [class.bg-gray-200]="filtroEstado !== 'COMPLETADO'"
+            class="px-3 py-1 rounded-lg text-xs sm:text-sm font-medium transition-colors"
+          >
+            Completados
+          </button>
+          <button
+            (click)="filtroEstado = 'EN_PROGRESO'"
+            [class.bg-yellow-600]="filtroEstado === 'EN_PROGRESO'"
+            [class.text-white]="filtroEstado === 'EN_PROGRESO'"
+            [class.bg-gray-200]="filtroEstado !== 'EN_PROGRESO'"
+            class="px-3 py-1 rounded-lg text-xs sm:text-sm font-medium transition-colors"
+          >
+            En Progreso
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="progresosFiltrados.length === 0" class="text-center py-12 text-gray-500">
+        <p class="text-4xl mb-3">📖</p>
+        <p class="text-base sm:text-lg font-medium">No hay cursos en esta categoría</p>
+      </div>
+
+      <!-- Tabla para desktop -->
+      <div *ngIf="progresosFiltrados.length > 0" class="hidden md:block overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Curso
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Módulo
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Estado
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Fecha Inicio
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Completado
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >
+                Tiempo
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr
+              *ngFor="let progreso of progresosFiltrados"
+              class="hover:bg-gray-50 transition-colors"
+            >
+              <td class="px-6 py-4 text-sm font-medium text-gray-900">
+                {{ progreso.tituloCurso }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ progreso.nombreModulo }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span
+                  *ngIf="progreso.estado === 'COMPLETADO'"
+                  class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
+                >
+                  ✅ Completado
+                </span>
+                <span
+                  *ngIf="progreso.estado === 'EN_PROGRESO'"
+                  class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800"
+                >
+                  📚 En Progreso
+                </span>
+                <span
+                  *ngIf="progreso.estado === 'NO_INICIADO'"
+                  class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800"
+                >
+                  ⏸️ No Iniciado
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ progreso.fechaInicio | date : 'dd/MM/yyyy HH:mm' }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <span *ngIf="progreso.fechaCompletado" class="font-medium text-green-600">
+                  {{ progreso.fechaCompletado | date : 'dd/MM/yyyy HH:mm' }}
+                </span>
+                <span *ngIf="!progreso.fechaCompletado" class="text-gray-400">-</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <span *ngIf="progreso.fechaCompletado" class="font-medium">
+                  {{ calcularTiempoCurso(progreso) }}
+                </span>
+                <span *ngIf="!progreso.fechaCompletado" class="text-gray-400">En curso</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Cards para móvil/tablet -->
+      <div *ngIf="progresosFiltrados.length > 0" class="md:hidden space-y-4">
+        <div
+          *ngFor="let progreso of progresosFiltrados"
+          class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+        >
+          <div class="flex items-start justify-between mb-3">
+            <h3 class="font-semibold text-gray-900 text-sm flex-1 mr-2">
+              {{ progreso.tituloCurso }}
+            </h3>
+            <span
+              *ngIf="progreso.estado === 'COMPLETADO'"
+              class="px-2 py-1 inline-flex text-xs font-semibold rounded-full bg-green-100 text-green-800 flex-shrink-0"
+            >
+              ✅
+            </span>
+            <span
+              *ngIf="progreso.estado === 'EN_PROGRESO'"
+              class="px-2 py-1 inline-flex text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 flex-shrink-0"
+            >
+              📚
+            </span>
+            <span
+              *ngIf="progreso.estado === 'NO_INICIADO'"
+              class="px-2 py-1 inline-flex text-xs font-semibold rounded-full bg-gray-100 text-gray-800 flex-shrink-0"
+            >
+              ⏸️
+            </span>
+          </div>
+
+          <div class="space-y-2 text-xs">
+            <div class="flex justify-between">
+              <span class="text-gray-500">Módulo:</span>
+              <span class="font-medium text-gray-900">{{ progreso.nombreModulo }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-500">Inicio:</span>
+              <span class="font-medium text-gray-900">
+                {{ progreso.fechaInicio | date : 'dd/MM/yyyy' }}
+              </span>
+            </div>
+            <div *ngIf="progreso.fechaCompletado" class="flex justify-between">
+              <span class="text-gray-500">Completado:</span>
+              <span class="font-medium text-green-600">
+                {{ progreso.fechaCompletado | date : 'dd/MM/yyyy' }}
+              </span>
+            </div>
+            <div *ngIf="progreso.fechaCompletado" class="flex justify-between">
+              <span class="text-gray-500">Tiempo:</span>
+              <span class="font-medium text-gray-900">{{ calcularTiempoCurso(progreso) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

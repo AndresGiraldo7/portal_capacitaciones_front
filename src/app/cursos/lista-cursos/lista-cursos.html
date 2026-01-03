@@ -1,0 +1,161 @@
+<div class="min-h-screen bg-gray-50">
+  <app-navbar></app-navbar>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header con estadísticas -->
+    <div class="mb-8">
+      <button
+        routerLink="/cursos"
+        class="text-primary-600 hover:text-primary-700 mb-4 inline-flex items-center"
+      >
+        ← Volver a Módulos
+      </button>
+
+      <div class="flex justify-between items-start">
+        <h1 class="text-3xl font-bold text-gray-900">
+          {{ nombreModulo || 'Cursos Disponibles' }}
+        </h1>
+
+        <!-- Panel de insignias -->
+        <div class="bg-white rounded-lg shadow-sm p-4 min-w-[200px]">
+          <div class="text-sm text-gray-600 mb-2">Tu progreso</div>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-gray-500">Completados:</span>
+              <span class="font-semibold text-green-600">{{ getCursosCompletados() }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-gray-500">En progreso:</span>
+              <span class="font-semibold text-blue-600">{{ getCursosEnProgreso() }}</span>
+            </div>
+            <div class="flex items-center justify-between" style="display: none">
+              <span class="text-xs text-gray-500">Insignias:</span>
+              <span class="font-semibold text-yellow-600">🏅 {{ insignias.length }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="loading" class="text-center py-12">
+      <div
+        class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"
+      ></div>
+    </div>
+
+    <div *ngIf="!loading" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div *ngFor="let curso of cursos" class="card relative hover:shadow-lg transition-shadow">
+        <!-- Badge de estado -->
+        <div class="absolute top-4 right-4">
+          <span
+            *ngIf="getProgreso(curso.id!)?.estado === 'EN_PROGRESO'"
+            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+          >
+            📚 En progreso
+          </span>
+          <span
+            *ngIf="getProgreso(curso.id!)?.estado === 'COMPLETADO'"
+            class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
+          >
+            ✅ Completado
+          </span>
+        </div>
+
+        <h3 class="text-xl font-semibold text-gray-900 mb-2 pr-24">
+          {{ curso.titulo }}
+        </h3>
+        <p class="text-gray-600 mb-4">{{ curso.descripcion }}</p>
+
+        <!-- Información de progreso -->
+        <div *ngIf="getProgreso(curso.id!)" class="mb-4 space-y-1">
+          <div class="text-sm text-gray-500">
+            <span class="font-medium">Iniciado:</span>
+            {{ getProgreso(curso.id!)!.fechaInicio | date : 'dd/MM/yyyy' }}
+          </div>
+          <div *ngIf="getProgreso(curso.id!)!.fechaCompletado" class="text-sm text-gray-500">
+            <span class="font-medium">Completado:</span>
+            {{ getProgreso(curso.id!)!.fechaCompletado | date : 'dd/MM/yyyy' }}
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="mt-4 space-y-2">
+          <!-- No iniciado -->
+          <button
+            *ngIf="!getProgreso(curso.id!)"
+            (click)="iniciarCurso(curso)"
+            class="btn-primary w-full"
+          >
+            🚀 Iniciar Curso
+          </button>
+
+          <!-- En progreso -->
+          <div *ngIf="getProgreso(curso.id!)?.estado === 'EN_PROGRESO'">
+            <button (click)="continuarCurso(curso)" class="btn-primary w-full mb-2">
+              📖 Continuar Curso
+            </button>
+            <button
+              (click)="completarCurso(getProgreso(curso.id!)!)"
+              class="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            >
+              ✓ Marcar como Completado
+            </button>
+          </div>
+
+          <!-- Completado -->
+          <div *ngIf="getProgreso(curso.id!)?.estado === 'COMPLETADO'" class="space-y-2">
+            <button
+              (click)="revisarCurso(curso)"
+              class="w-full px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              🔄 Revisar Curso
+            </button>
+            <div class="flex items-center justify-center text-sm text-green-600">
+              <span>🏆 Insignia obtenida</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mensaje si no hay cursos -->
+    <div
+      *ngIf="!loading && cursos.length === 0"
+      class="text-center py-12 bg-white rounded-lg shadow"
+    >
+      <p class="text-gray-500 text-lg">No hay cursos disponibles en este módulo</p>
+    </div>
+  </div>
+
+  <!-- Modal de insignia ganada -->
+  <div
+    *ngIf="mostrarInsigniaModal"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in"
+    (click)="cerrarModalInsignia()"
+  >
+    <div
+      class="bg-white rounded-2xl p-8 max-w-md mx-4 text-center animate-scale-in"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="mb-6">
+        <div class="text-6xl mb-4 animate-bounce">
+          {{ insigniaRecienGanada?.imagenUrl }}
+        </div>
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">¡Insignia Desbloqueada!</h2>
+        <p class="text-lg text-gray-700 font-semibold mb-2">
+          {{ insigniaRecienGanada?.nombre }}
+        </p>
+        <p class="text-gray-600">
+          {{ insigniaRecienGanada?.descripcion }}
+        </p>
+      </div>
+
+      <button
+        (click)="cerrarModalInsignia()"
+        class="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium"
+      >
+        ¡Genial!
+      </button>
+    </div>
+  </div>
+</div>

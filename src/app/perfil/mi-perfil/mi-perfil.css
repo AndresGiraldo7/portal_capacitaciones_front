@@ -1,0 +1,334 @@
+/* Truncamiento de texto a 2 líneas */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Animación sutil para las insignias */
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 5px rgba(251, 191, 36, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+    }
+}
+
+.card:hover .group:hover {
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Scrollbar personalizado para áreas con overflow */
+.overflow-y-auto::-webkit-scrollbar {
+    width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 10px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
+}
+
+/* Mejoras para el header en móviles */
+@media (max-width: 640px) {
+    .bg-gradient-to-r {
+        background: linear-gradient(to bottom, rgb(79 70 229), rgb(67 56 202));
+    }
+}
+
+/* Animaciones suaves para cards */
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+/* Mejoras para las insignias en móviles */
+@media (max-width: 640px) {
+    .group {
+        min-height: 140px;
+    }
+
+    .group:active {
+        transform: scale(0.95);
+    }
+}
+
+/* Smooth scroll para toda la página */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Mejora visual para los badges de estado */
+.rounded-full {
+    white-space: nowrap;
+}
+
+/* Animación para el loader */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* Mejoras para la tabla en tablets */
+@media (min-width: 768px) and (max-width: 1024px) {
+    table {
+        font-size: 0.875rem;
+    }
+
+    th,
+    td {
+        padding: 0.75rem 1rem;
+    }
+}
+
+/* Espaciado responsive mejorado */
+@media (max-width: 640px) {
+    .card {
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.125rem;
+    }
+}
+
+/* Mejoras para botones de filtro en móviles */
+@media (max-width: 640px) {
+    button[class*='rounded-lg'] {
+        flex: 1;
+        min-width: 0;
+        padding: 0.5rem 0.75rem;
+    }
+}
+
+/* Animación de entrada para cards */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+/* Delays escalonados para animaciones de cards */
+.grid>.card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.grid>.card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.grid>.card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.grid>.card:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+/* Mejora para el estado de focus en elementos interactivos */
+button:focus,
+a:focus {
+    outline: 2px solid rgb(99 102 241);
+    outline-offset: 2px;
+}
+
+/* Mejora para textos largos que podrían romper el layout */
+.break-words {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.break-all {
+    word-break: break-all;
+}
+
+/* Sombra mejorada para hover en insignias */
+.group:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Mejora para el grid de insignias en diferentes resoluciones */
+@media (max-width: 640px) {
+    .grid.grid-cols-2 {
+        gap: 0.75rem;
+    }
+}
+
+/* Animación para barras de progreso */
+@keyframes progressBar {
+    from {
+        width: 0;
+    }
+}
+
+.bg-primary-600,
+.bg-green-600 {
+    animation: progressBar 1s ease-out;
+}
+
+/* Mejoras para la accesibilidad del contraste */
+.text-gray-500 {
+    color: #6b7280;
+}
+
+.text-gray-600 {
+    color: #4b5563;
+}
+
+.text-gray-900 {
+    color: #111827;
+}
+
+/* Mejora para los estados empty */
+.text-center.py-12 {
+    padding: 2rem 1rem;
+}
+
+@media (min-width: 640px) {
+    .text-center.py-12 {
+        padding: 3rem 1rem;
+    }
+}
+
+/* Transiciones suaves para todos los elementos interactivos */
+button,
+a,
+.card,
+.group {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Mejora para el overflow horizontal en móviles */
+@media (max-width: 768px) {
+    .overflow-x-auto {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Espaciado adicional para el último elemento */
+.space-y-4>*:last-child,
+.space-y-3>*:last-child {
+    margin-bottom: 0;
+}
+
+/* Mejora para la visualización de fechas en móviles */
+@media (max-width: 640px) {
+    .whitespace-nowrap {
+        white-space: normal;
+    }
+}
+
+/* Animación de entrada para las cards de móvil */
+@media (max-width: 768px) {
+    .md\:hidden>div {
+        animation: fadeInUp 0.3s ease-out;
+    }
+
+    .md\:hidden>div:nth-child(n + 2) {
+        animation-delay: 0.05s;
+    }
+}
+
+/* Mejora para el z-index y posicionamiento */
+.sticky {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+/* Loading state mejorado */
+.animate-spin {
+    border-top-color: transparent;
+    border-right-color: transparent;
+}
+
+/* Mejora para el contraste de los badges */
+.bg-primary-100 {
+    background-color: rgb(224 231 255);
+}
+
+.text-primary-800 {
+    color: rgb(55 48 163);
+}
+
+/* Hover effect para las cards de actividad */
+.hover\:bg-gray-100:hover {
+    background-color: rgb(243 244 246);
+    cursor: pointer;
+}
+
+/* Mejora para el responsive del avatar */
+@media (max-width: 640px) {
+    .rounded-full {
+        flex-shrink: 0;
+    }
+}
+
+/* Gradiente suave para las cards */
+.bg-gradient-to-br,
+.bg-gradient-to-r {
+    background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+}
+
+/* Mejora para tap targets en móviles (mínimo 44x44px) */
+@media (max-width: 640px) {
+
+    button,
+    a {
+        min-height: 44px;
+        min-width: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* Print styles (opcional) */
+@media print {
+
+    nav,
+    button {
+        display: none;
+    }
+
+    .card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}

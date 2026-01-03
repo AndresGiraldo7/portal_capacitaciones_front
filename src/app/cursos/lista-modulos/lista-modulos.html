@@ -1,0 +1,31 @@
+<div class="min-h-screen bg-gray-50">
+  <app-navbar></app-navbar>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Módulos de Capacitación</h1>
+      <p class="mt-2 text-gray-600">Selecciona un módulo para ver los cursos disponibles</p>
+    </div>
+
+    <div *ngIf="loading" class="text-center py-12">
+      <div
+        class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"
+      ></div>
+      <p class="mt-4 text-gray-600">Cargando módulos...</p>
+    </div>
+
+    <div *ngIf="!loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div
+        *ngFor="let modulo of modulos"
+        (click)="verCursos(modulo.idModulo)"
+        class="card hover:shadow-xl transition-shadow cursor-pointer transform hover:-translate-y-1 transition-transform"
+      >
+        <div class="text-center">
+          <div class="text-5xl mb-4">{{ getIcono(modulo.nombre) }}</div>
+          <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ modulo.nombre }}</h3>
+          <p class="text-gray-600 text-sm">{{ modulo.descripcion }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
