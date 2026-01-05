@@ -7,14 +7,17 @@ import {
   NavigationError,
   RouterOutlet,
 } from '@angular/router';
+import { ToastComponent } from './core/component/toast';
+import { ConfirmDialogComponent } from './core/component/confirm-dialog';
 import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  template: `<router-outlet></router-outlet>`,
+  imports: [RouterOutlet, ToastComponent, ConfirmDialogComponent],
+  template: `<router-outlet></router-outlet> <app-toast></app-toast>
+    <app-confirm-dialog></app-confirm-dialog>`,
 })
-export class App { 
+export class App {
   protected readonly title = signal('portal-capacitaciones');
   private router = inject(Router);
 

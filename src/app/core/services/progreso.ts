@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ProgresoCurso, CrearProgresoDTO } from '../models';
+import { environment } from '../../environment/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProgresoService {
-  private apiUrl = 'http://localhost:8080/api/progreso';
+  private apiUrl = `${environment.apiUrl}/progreso`;
 
   constructor(private http: HttpClient) {}
 

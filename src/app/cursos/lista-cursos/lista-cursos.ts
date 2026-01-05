@@ -4,6 +4,8 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CursoService } from '../../core/services/curso';
 import { ProgresoService } from '../../core/services/progreso';
 import { AuthService } from '../../core/services/auth';
+import { ToastService } from '../../core/services/toast.service';
+import { ConfirmDialogService } from '../../core/services/confirm-dialog.service';
 import { Curso, ProgresoCurso, CrearProgresoDTO } from '../../core/models';
 import { NavbarComponent } from '../../shared/navbar/navbar';
 
@@ -37,7 +39,9 @@ export class ListaCursosComponent implements OnInit {
     private router: Router,
     private cursoService: CursoService,
     private progresoService: ProgresoService,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastService: ToastService,
+    private confirmDialogService: ConfirmDialogService
   ) {}
 
   ngOnInit(): void {
@@ -64,6 +68,7 @@ export class ListaCursosComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al cargar cursos', err);
+        this.toastService.error('Error al cargar los cursos. Por favor, intenta nuevamente.');
         this.loading = false;
       },
     });
@@ -78,6 +83,7 @@ export class ListaCursosComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error al cargar progresos', err);
+          this.toastService.error('Error al cargar tu progreso.');
         },
       });
     }
@@ -86,13 +92,14 @@ export class ListaCursosComponent implements OnInit {
   cargarInsignias(): void {
     const userId = this.authService.currentUserValue?.id;
     if (userId) {
-      // Ajusta esta URL según tu API
       fetch(`/api/usuario-insignias/usuario/${userId}`)
         .then((res) => res.json())
         .then((data) => {
           this.insignias = data;
         })
-        .catch((err) => console.error('Error al cargar insignias', err));
+        .catch((err) => {
+          console.error('Error al cargar insignias', err);
+        });
     }
   }
 
@@ -111,24 +118,21 @@ export class ListaCursosComponent implements OnInit {
   iniciarCurso(curso: Curso): void {
     const user = this.authService.currentUserValue;
     if (!user) {
-      this.mostrarMensaje('Debes iniciar sesión para continuar', 'error');
+      this.toastService.error('Debes iniciar sesión para continuar');
       return;
     }
 
     if (!curso.id) {
-      this.mostrarMensaje('Error: Curso inválido', 'error');
+      this.toastService.error('Error: Curso inválido');
       return;
     }
 
     const progresoExistente = this.getProgreso(curso.id);
     if (progresoExistente) {
       if (progresoExistente.estado === 'EN_PROGRESO') {
-        this.mostrarMensaje(
-          'Ya tienes este curso en progreso. Haz clic en "Continuar Curso"',
-          'info'
-        );
+        this.toastService.info('Ya tienes este curso en progreso. Haz clic en "Continuar Curso"');
       } else if (progresoExistente.estado === 'COMPLETADO') {
-        this.mostrarMensaje('Ya completaste este curso. Puedes revisarlo cuando quieras.', 'info');
+        this.toastService.info('Ya completaste este curso. Puedes revisarlo cuando quieras.');
       }
       return;
     }
@@ -142,55 +146,64 @@ export class ListaCursosComponent implements OnInit {
     this.progresoService.guardarProgreso(progreso).subscribe({
       next: (response) => {
         console.log('Curso iniciado exitosamente:', response);
-        this.mostrarMensaje('¡Curso iniciado exitosamente! 🎉', 'success');
+        this.toastService.success('¡Curso iniciado exitosamente! 🎉');
         this.cargarProgresos();
       },
       error: (err) => {
         console.error('Error al iniciar curso:', err);
         if (err.error?.error) {
-          this.mostrarMensaje(err.error.error, 'error');
+          this.toastService.error(err.error.error);
         } else {
-          this.mostrarMensaje('Error al iniciar el curso. Intenta de nuevo.', 'error');
+          this.toastService.error('Error al iniciar el curso. Intenta de nuevo.');
         }
       },
     });
   }
 
   continuarCurso(curso: Curso): void {
-    this.mostrarMensaje('Redirigiendo al contenido del curso...', 'info');
+    this.toastService.info('Redirigiendo al contenido del curso...');
     console.log('Continuar curso:', curso);
   }
 
   revisarCurso(curso: Curso): void {
-    this.mostrarMensaje('Abriendo curso para revisión...', 'info');
+    this.toastService.info('Abriendo curso para revisión...');
     console.log('Revisar curso:', curso);
   }
 
   completarCurso(progreso: ProgresoCurso): void {
     if (!progreso.idProgreso) {
-      this.mostrarMensaje('Error: Progreso inválido', 'error');
+      this.toastService.error('Error: Progreso inválido');
       return;
     }
 
-    if (confirm('¿Estás seguro de que deseas marcar este curso como completado?')) {
-      this.progresoService.completarCurso(progreso.idProgreso).subscribe({
-        next: (response) => {
-          console.log('Curso completado:', response);
-          this.mostrarMensaje('¡Felicitaciones! Has completado el curso. 🎉', 'success');
+    this.confirmDialogService
+      .confirm(
+        '¿Estás seguro de que deseas marcar este curso como completado?',
+        'Completar Curso',
+        'Sí, completar',
+        'Cancelar'
+      )
+      .then((confirmed) => {
+        if (confirmed) {
+          this.progresoService.completarCurso(progreso.idProgreso!).subscribe({
+            next: (response) => {
+              console.log('Curso completado:', response);
+              this.toastService.success('¡Felicitaciones! Has completado el curso. 🎉');
 
-          // Mostrar modal de insignia ganada
-          this.mostrarInsigniaGanada();
+              // Mostrar modal de insignia ganada
+              this.mostrarInsigniaGanada();
 
-          // Recargar datos
-          this.cargarProgresos();
-          this.cargarInsignias();
-        },
-        error: (err) => {
-          console.error('Error al completar curso', err);
-          this.mostrarMensaje('Error al completar el curso', 'error');
-        },
+              // Recargar datos
+              this.cargarProgresos();
+              this.cargarInsignias();
+            },
+            error: (err) => {
+              console.error('Error al completar curso', err);
+              this.toastService.error('Error al completar el curso');
+            },
+          });
+        }
       });
-    }
   }
 
   mostrarInsigniaGanada(): void {
@@ -212,14 +225,5 @@ export class ListaCursosComponent implements OnInit {
   cerrarModalInsignia(): void {
     this.mostrarInsigniaModal = false;
     this.insigniaRecienGanada = null;
-  }
-
-  private mostrarMensaje(mensaje: string, tipo: 'success' | 'error' | 'info'): void {
-    const iconos = {
-      success: '✅',
-      error: '❌',
-      info: 'ℹ️',
-    };
-    alert(`${iconos[tipo]} ${mensaje}`);
   }
 }

@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CursoService } from '../../core/services/curso';
 import { ModuloService } from '../../core/services/modulo';
+import { ToastService } from '../../core/services/toast.service';
+import { ConfirmDialogService } from '../../core/services/confirm-dialog.service';
 import { Curso, Modulo } from '../../core/models';
 import { NavbarComponent } from '../../shared/navbar/navbar';
 
@@ -31,10 +33,12 @@ export class AdminCursosComponent implements OnInit {
   // ID del módulo seleccionado (para el select)
   moduloSeleccionadoId: number | undefined = undefined;
 
-  // Mensaje de feedback
-  mensaje: { texto: string; tipo: 'success' | 'error' | 'info' } | null = null;
-
-  constructor(private cursoService: CursoService, private moduloService: ModuloService) {}
+  constructor(
+    private cursoService: CursoService,
+    private moduloService: ModuloService,
+    private toastService: ToastService,
+    private confirmDialogService: ConfirmDialogService
+  ) {}
 
   ngOnInit(): void {
     this.cargarCursos();
@@ -49,7 +53,7 @@ export class AdminCursosComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al cargar cursos', err);
-        this.mostrarMensaje('Error al cargar los cursos', 'error');
+        this.toastService.error('Error al cargar los cursos');
         this.loading = false;
       },
     });
@@ -62,7 +66,7 @@ export class AdminCursosComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al cargar módulos', err);
-        this.mostrarMensaje('Error al cargar los módulos', 'error');
+        this.toastService.error('Error al cargar los módulos');
       },
     });
   }
@@ -78,7 +82,6 @@ export class AdminCursosComponent implements OnInit {
     };
     this.moduloSeleccionadoId = undefined;
     this.mostrarFormulario = true;
-    this.ocultarMensaje();
   }
 
   editarCurso(curso: Curso): void {
@@ -89,7 +92,6 @@ export class AdminCursosComponent implements OnInit {
     this.moduloSeleccionadoId = curso.idModulo;
 
     this.mostrarFormulario = true;
-    this.ocultarMensaje();
   }
 
   guardarCurso(): void {
@@ -112,10 +114,10 @@ export class AdminCursosComponent implements OnInit {
     operacion.subscribe({
       next: () => {
         const mensaje = this.modoEdicion
-          ? 'Curso actualizado exitosamente'
-          : 'Curso creado exitosamente';
+          ? 'Curso actualizado exitosamente ✓'
+          : 'Curso creado exitosamente ✓';
 
-        this.mostrarMensaje(mensaje, 'success');
+        this.toastService.success(mensaje);
         this.cerrarFormulario();
         this.cargarCursos();
       },
@@ -140,24 +142,33 @@ export class AdminCursosComponent implements OnInit {
           }
         }
 
-        this.mostrarMensaje(mensajeError, 'error');
+        this.toastService.error(mensajeError);
       },
     });
   }
 
   eliminarCurso(id: number): void {
-    if (confirm('¿Estás seguro de que deseas eliminar este curso?')) {
-      this.cursoService.eliminar(id).subscribe({
-        next: () => {
-          this.mostrarMensaje('Curso eliminado exitosamente', 'success');
-          this.cargarCursos();
-        },
-        error: (err) => {
-          console.error('Error al eliminar curso', err);
-          this.mostrarMensaje('Error al eliminar el curso', 'error');
-        },
+    this.confirmDialogService
+      .danger(
+        'Esta acción no se puede deshacer. El curso será eliminado permanentemente.',
+        '¿Eliminar curso?',
+        'Sí, eliminar',
+        'Cancelar'
+      )
+      .then((confirmed) => {
+        if (confirmed) {
+          this.cursoService.eliminar(id).subscribe({
+            next: () => {
+              this.toastService.success('Curso eliminado exitosamente ✓');
+              this.cargarCursos();
+            },
+            error: (err) => {
+              console.error('Error al eliminar curso', err);
+              this.toastService.error('Error al eliminar el curso');
+            },
+          });
+        }
       });
-    }
   }
 
   cerrarFormulario(): void {
@@ -174,31 +185,16 @@ export class AdminCursosComponent implements OnInit {
 
   private validarFormulario(): boolean {
     if (!this.cursoActual.titulo || this.cursoActual.titulo.trim() === '') {
-      this.mostrarMensaje('El título es obligatorio', 'error');
+      this.toastService.error('El título es obligatorio');
       return false;
     }
 
     if (!this.moduloSeleccionadoId) {
-      this.mostrarMensaje('Debes seleccionar un módulo', 'error');
+      this.toastService.error('Debes seleccionar un módulo');
       return false;
     }
 
     return true;
-  }
-
-  private mostrarMensaje(texto: string, tipo: 'success' | 'error' | 'info'): void {
-    this.mensaje = { texto, tipo };
-
-    // Auto-ocultar después de 5 segundos si es success o info
-    if (tipo === 'success' || tipo === 'info') {
-      setTimeout(() => {
-        this.ocultarMensaje();
-      }, 5000);
-    }
-  }
-
-  ocultarMensaje(): void {
-    this.mensaje = null;
   }
 
   getNombreModulo(idModulo?: number): string {
