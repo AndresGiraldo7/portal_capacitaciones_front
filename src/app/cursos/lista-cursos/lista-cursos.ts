@@ -53,7 +53,7 @@ export class ListaCursosComponent implements OnInit {
       }
       this.cargarCursos();
       this.cargarProgresos();
-      this.cargarInsignias();
+      //this.cargarInsignias();
     });
   }
 
@@ -89,7 +89,7 @@ export class ListaCursosComponent implements OnInit {
     }
   }
 
-  cargarInsignias(): void {
+  /*cargarInsignias(): void {
     const userId = this.authService.currentUserValue?.id;
     if (userId) {
       fetch(`/api/usuario-insignias/usuario/${userId}`)
@@ -101,7 +101,7 @@ export class ListaCursosComponent implements OnInit {
           console.error('Error al cargar insignias', err);
         });
     }
-  }
+  }*/
 
   getProgreso(idCurso: number): ProgresoCurso | undefined {
     return this.progresos.find((p) => p.idCurso === idCurso);
@@ -195,7 +195,7 @@ export class ListaCursosComponent implements OnInit {
 
               // Recargar datos
               this.cargarProgresos();
-              this.cargarInsignias();
+              //this.cargarInsignias();
             },
             error: (err) => {
               console.error('Error al completar curso', err);
